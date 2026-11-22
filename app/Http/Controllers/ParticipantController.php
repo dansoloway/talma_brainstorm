@@ -16,11 +16,13 @@ use Illuminate\View\View;
 
 class ParticipantController extends Controller
 {
-    public function home(): RedirectResponse
+    public function home(): RedirectResponse|View
     {
         $first = Stage::ordered()->first();
 
-        abort_unless($first, 404, __('No stages have been set up yet.'));
+        if (! $first) {
+            return view('participant.waiting');
+        }
 
         return redirect()->route('participant.stage', $first);
     }

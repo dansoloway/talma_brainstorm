@@ -32,5 +32,7 @@
     "Thank you, :name!": "תודה, :name!",
     "Your responses are saved. You can still go back and change anything until the session ends.": "התשובות שלך נשמרו. אפשר עדיין לחזור ולשנות עד סוף המפגש.",
     "Back to my responses": "חזרה לתשובות שלי",
-    "No stages have been set up yet.": "עדיין לא הוגדרו שלבים."
+    "No stages have been set up yet.": "עדיין לא הוגדרו שלבים.",
+    "Not ready yet": "עדיין לא מוכן",
+    "No stages have been set up yet. Please check back once an organizer has prepared the session.": "עדיין לא הוגדרו שלבים. חזרו לכאן אחרי שהמארגנים יכינו את המפגש."
 }
