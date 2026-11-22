@@ -74,13 +74,13 @@ a { color: var(--brand); }
   color: inherit;
   flex-shrink: 0;
 }
-/* Brand PNGs are blue-on-black — sit them on a black plate so they read correctly on light UI */
+/* Brand PNGs sit on a white plate so the mark reads cleanly on light UI */
 .brand-plate {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 6px 10px 6px 6px;
-  background: #000;
+  background: #fff;
   border-radius: 10px;
   box-shadow: 0 6px 16px rgba(18, 22, 43, 0.12);
 }

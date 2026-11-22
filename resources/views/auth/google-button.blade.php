@@ -4,7 +4,9 @@
 
 <div class="mt-6 space-y-4">
     <div class="flex flex-col items-center gap-3 pb-2">
-        <img src="{{ asset('brand/blue-a.png') }}" alt="" width="56" height="56" class="h-14 w-14 object-contain">
+        <span class="inline-flex rounded-2xl bg-white p-3 shadow-sm ring-1 ring-gray-200/80">
+            <img src="{{ asset('brand/blue-a.png') }}" alt="" width="56" height="56" class="h-14 w-14 object-contain">
+        </span>
         <p class="text-center text-sm text-gray-500 dark:text-gray-400">
             {{ __('English for Change') }}
         </p>
