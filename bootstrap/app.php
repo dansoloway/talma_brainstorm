@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('filament.admin.auth.login');
             }
 
-            return route('participant.no-access');
+            return route('participant.login');
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {

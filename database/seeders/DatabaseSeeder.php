@@ -49,8 +49,12 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        foreach (['Test Participant', 'Noa Levi', 'Sam Cohen'] as $name) {
-            Participant::create(['name' => $name]);
+        foreach ([
+            'Test Participant' => 'test.participant@talmaisrael.com',
+            'Noa Levi' => 'noa.levi@talmaisrael.com',
+            'Sam Cohen' => 'sam.cohen@talmaisrael.com',
+        ] as $name => $email) {
+            Participant::create(['name' => $name, 'email' => $email]);
         }
     }
 }

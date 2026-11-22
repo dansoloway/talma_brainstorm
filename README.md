@@ -2,8 +2,8 @@
 
 About 30 people spend roughly 2 hours writing responses to prompts. Every keystroke is autosaved. Organizers set up stages and prompts, then read and export everything in an admin panel.
 
-- **Participants** open a personal link (`/p/{token}`), choose 1 to 5 prompts on each stage, and write. Their text saves about 2 seconds after they stop typing, and also when they switch pages or close the tab. A copy is kept in the browser until the server confirms it.
-- **Organizers** use `/admin` (Filament) to manage stages and prompts, add participants, watch who is writing, read responses by prompt or by person, and export CSV files. Sign-in is Google-only, limited to the emails in `ADMIN_EMAILS`.
+- **Participants** sign in at `/login` with a `@talmaisrael.com` Google account, choose 1 to 5 prompts on each stage, and write. Their text saves about 2 seconds after they stop typing, and also when they switch pages or close the tab. A copy is kept in the browser until the server confirms it. First sign-in creates their participant record.
+- **Organizers** use `/admin` (Filament) to manage stages and prompts, watch who is writing, read responses by prompt or by person, and export CSV files. Sign-in is Google-only, limited to the emails in `ADMIN_EMAILS`.
 
 ## Run it locally
 
@@ -23,7 +23,7 @@ touch database/database.sqlite && php artisan migrate --seed
 php artisan serve
 ```
 
-The seeder creates 3 demo stages, 30 prompts in English and Hebrew, 3 participants, and a local organizer account (credentials are in `database/seeders/DatabaseSeeder.php`). Find the participants' personal links under **Admin → Participants**.
+The seeder creates 3 demo stages, 30 prompts in English and Hebrew, 3 participants, and organizer accounts for the emails in `ADMIN_EMAILS`. Participants sign in with Google (`@talmaisrael.com`).
 
 Run the tests:
 
@@ -35,7 +35,7 @@ php artisan test
 
 1. **Admin → Stages**: create the stages in order, drag them to reorder. Open each one to add its 10 prompts, or use **Bulk add** to paste them one per line. A badge warns when a stage doesn't have exactly 10 visible prompts.
 2. Click **Preview** on each stage to see it exactly as participants will.
-3. **Admin → Participants → Bulk add**: paste the names, one per line. Then **Download links (CSV)** to get everyone's personal link to send out.
+3. Share the app URL. Anyone with a `@talmaisrael.com` Google account can open `/login` and start writing — no personal links.
 4. Once someone has written a response to a prompt, it can't be deleted, only hidden. Edits show a warning, and each response keeps a copy of the original prompt text.
 
 ## During the event
@@ -79,10 +79,11 @@ Set Google OAuth credentials (Cloud Console → OAuth client, authorized redirec
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 GOOGLE_REDIRECT_URI="${APP_URL}/auth/google/callback"
+GOOGLE_ALLOWED_DOMAIN=talmaisrael.com
 ADMIN_EMAILS=daniel@talmaisrael.com,dvir.ido@talmaisrael.com
 ```
 
-Organizers sign in at `/admin` with Google only. Only allowlisted emails can enter; first successful login creates their account.
+Participants sign in at `/login` with any verified Google account on `GOOGLE_ALLOWED_DOMAIN`. Organizers sign in at `/admin` with Google; only `ADMIN_EMAILS` can enter. First successful login creates the account.
 
 Also check the PHP-FPM worker count on Cloudways and confirm Redis is enabled. Load-test on staging with k6 before the event (see `.cursor/rules/reliability-deploy.mdc`).
 

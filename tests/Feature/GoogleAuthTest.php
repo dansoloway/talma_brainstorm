@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Participant;
+use App\Models\Stage;
 use App\Models\User;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
@@ -87,4 +89,55 @@ it('blocks panel access for users outside the admin allowlist', function () {
     $user = User::factory()->create(['email' => 'not-allowed@talmaisrael.com']);
 
     expect($user->canAccessPanel(filament()->getDefaultPanel()))->toBeFalse();
+});
+
+it('creates and signs in a domain participant on first Google login', function () {
+    Stage::factory()->create();
+    mockGoogle(fakeGoogleUser('writer@talmaisrael.com', 'Writer'));
+
+    $this->withSession(['google_auth_intent' => 'participant'])
+        ->get(route('auth.google.callback'))
+        ->assertRedirect(route('participant.home'));
+
+    $participant = Participant::where('email', 'writer@talmaisrael.com')->sole();
+    expect($participant->name)->toBe('Writer');
+    $this->assertAuthenticatedAs($participant, 'participant');
+});
+
+it('rejects participant Google accounts outside the allowed domain', function () {
+    mockGoogle(fakeGoogleUser('someone@gmail.com'));
+
+    $this->withSession(['google_auth_intent' => 'participant'])
+        ->get(route('auth.google.callback'))
+        ->assertRedirect(route('participant.login'))
+        ->assertSessionHasErrors('email');
+
+    expect(Participant::where('email', 'someone@gmail.com')->exists())->toBeFalse();
+    $this->assertGuest('participant');
+});
+
+it('reuses an existing participant by email on Google login', function () {
+    Stage::factory()->create();
+    $existing = Participant::factory()->create([
+        'name' => 'Old Name',
+        'email' => 'writer@talmaisrael.com',
+    ]);
+
+    mockGoogle(fakeGoogleUser('writer@talmaisrael.com', 'New Name'));
+
+    $this->withSession(['google_auth_intent' => 'participant'])
+        ->get(route('auth.google.callback'))
+        ->assertRedirect(route('participant.home'));
+
+    expect(Participant::where('email', 'writer@talmaisrael.com')->count())->toBe(1)
+        ->and($existing->fresh()->name)->toBe('New Name');
+    $this->assertAuthenticatedAs($existing->fresh(), 'participant');
+});
+
+it('starts the participant Google redirect with a domain hint', function () {
+    mockGoogle(fakeGoogleUser('writer@talmaisrael.com'));
+
+    $this->get(route('auth.google.participant'))
+        ->assertRedirect()
+        ->assertSessionHas('google_auth_intent', 'participant');
 });

@@ -37,6 +37,7 @@ class ParticipantResource extends Resource
     {
         return $schema->components([
             TextInput::make('name')->required()->maxLength(255),
+            TextInput::make('email')->email()->maxLength(255),
         ]);
     }
 
@@ -44,11 +45,8 @@ class ParticipantResource extends Resource
     {
         return $schema->components([
             TextEntry::make('name'),
+            TextEntry::make('email')->placeholder('—'),
             TextEntry::make('finished_at')->label('Pressed Done')->dateTime()->placeholder('Not yet'),
-            TextEntry::make('link')
-                ->label('Personal link')
-                ->state(fn (Participant $record) => $record->link())
-                ->copyable(),
         ])->columns(3);
     }
 
@@ -62,16 +60,10 @@ class ParticipantResource extends Resource
                 ->withMax('responses', 'last_saved_at'))
             ->columns([
                 TextColumn::make('name')->searchable()->sortable()->weight('medium'),
+                TextColumn::make('email')->searchable()->sortable()->placeholder('—'),
                 TextColumn::make('answered_count')->label('Prompts answered')->sortable(),
                 TextColumn::make('responses_max_last_saved_at')->label('Last typed')->since()->sortable()->placeholder('Never'),
                 TextColumn::make('finished_at')->label('Done')->dateTime('H:i')->sortable()->placeholder('—'),
-                TextColumn::make('link')
-                    ->label('Personal link')
-                    ->state(fn (Participant $record) => $record->link())
-                    ->copyable()
-                    ->copyMessage('Link copied')
-                    ->limit(40)
-                    ->color('gray'),
             ])
             ->filters([
                 TernaryFilter::make('finished')

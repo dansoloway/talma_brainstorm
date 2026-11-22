@@ -15,7 +15,12 @@
     "Saving…": "שומר…",
     "Saved": "נשמר",
     "Not saved, retrying…": "לא נשמר, מנסה שוב…",
-    "Signed out. Open your personal link again. Your text is kept on this device.": "התנתקת. פתחו שוב את הקישור האישי. הטקסט שמור במכשיר הזה.",
+    "Signed out. Sign in with Google again. Your text is kept on this device.": "התנתקת. התחברו שוב עם Google. הטקסט שמור במכשיר הזה.",
+    "Sign in to write": "התחברות לכתיבה",
+    "Use your @:domain Google account.": "השתמשו בחשבון Google של @:domain.",
+    "Sign in with your @:domain Google account.": "התחברו עם חשבון Google של @:domain.",
+    "Sign in": "התחברות",
+    "Sign in with Google": "התחברות עם Google",
     "Preview: not saved": "תצוגה מקדימה: לא נשמר",
     ":n of :max chosen": "נבחרו :n מתוך :max",
     "Choose at least one prompt.": "בחרו לפחות שאלה אחת.",
@@ -27,8 +32,5 @@
     "Thank you, :name!": "תודה, :name!",
     "Your responses are saved. You can still go back and change anything until the session ends.": "התשובות שלך נשמרו. אפשר עדיין לחזור ולשנות עד סוף המפגש.",
     "Back to my responses": "חזרה לתשובות שלי",
-    "Personal link needed": "נדרש קישור אישי",
-    "Please use your personal link": "היכנסו דרך הקישור האישי",
-    "Open the personal link you were given to start writing. If you lost it, ask an organizer.": "פתחו את הקישור האישי שקיבלתם כדי להתחיל לכתוב. אם הוא אבד, פנו למארגנים.",
     "No stages have been set up yet.": "עדיין לא הוגדרו שלבים."
 }

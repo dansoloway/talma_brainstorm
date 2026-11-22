@@ -16,19 +16,6 @@ use Illuminate\View\View;
 
 class ParticipantController extends Controller
 {
-    /** Personal link: /p/{token}. Swaps the token for a session, then drops it from the URL. */
-    public function login(Request $request, string $token): RedirectResponse
-    {
-        $participant = Participant::where('access_token', $token)->first();
-
-        abort_unless($participant && hash_equals($participant->access_token, $token), 404);
-
-        Auth::guard('participant')->login($participant);
-        $request->session()->regenerate();
-
-        return redirect()->route('participant.home');
-    }
-
     public function home(): RedirectResponse
     {
         $first = Stage::ordered()->first();

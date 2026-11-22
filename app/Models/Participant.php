@@ -11,7 +11,7 @@ class Participant extends Authenticatable
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'email'];
 
     protected $hidden = ['access_token', 'remember_token'];
 
@@ -29,16 +29,38 @@ class Participant extends Authenticatable
     {
         static::creating(function (Participant $participant) {
             $participant->access_token ??= Str::random(40);
+
+            if (is_string($participant->email) && $participant->email !== '') {
+                $participant->email = strtolower(trim($participant->email));
+            }
         });
+
+        static::saving(function (Participant $participant) {
+            if (is_string($participant->email) && $participant->email !== '') {
+                $participant->email = strtolower(trim($participant->email));
+            }
+        });
+    }
+
+    public static function allowedDomain(): string
+    {
+        return strtolower(trim((string) config('services.google.allowed_domain', 'talmaisrael.com')));
+    }
+
+    public static function emailAllowed(?string $email): bool
+    {
+        if (! is_string($email) || $email === '') {
+            return false;
+        }
+
+        $email = strtolower(trim($email));
+        $domain = static::allowedDomain();
+
+        return $domain !== '' && str_ends_with($email, '@'.$domain);
     }
 
     public function responses(): HasMany
     {
         return $this->hasMany(Response::class);
-    }
-
-    public function link(): string
-    {
-        return route('participant.login', $this->access_token);
     }
 }

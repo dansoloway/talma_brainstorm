@@ -3,22 +3,27 @@
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ParticipantController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Organizer Google sign-in (Filament admin). Domain restricted in the callback.
-Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
+// Organizer Google sign-in (Filament admin). Allowlisted emails only.
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirectAdmin'])
     ->middleware('throttle:20,1')
     ->name('auth.google.redirect');
+Route::get('/auth/google/participant', [GoogleAuthController::class, 'redirectParticipant'])
+    ->middleware('throttle:20,1')
+    ->name('auth.google.participant');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
     ->middleware('throttle:20,1')
     ->name('auth.google.callback');
 
-// Personal link login.
-Route::get('/p/{token}', [ParticipantController::class, 'login'])
-    ->middleware('throttle:30,1')
-    ->name('participant.login');
+Route::get('/login', function () {
+    if (Auth::guard('participant')->check()) {
+        return redirect()->route('participant.home');
+    }
 
-Route::view('/no-access', 'participant.no-access')->name('participant.no-access');
+    return view('participant.login');
+})->name('participant.login');
 
 Route::middleware('auth:participant')->group(function () {
     Route::get('/', [ParticipantController::class, 'home'])->name('participant.home');

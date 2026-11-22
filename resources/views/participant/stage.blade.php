@@ -120,7 +120,7 @@
         'saving' => __('Saving…'),
         'saved' => __('Saved'),
         'retrying' => __('Not saved, retrying…'),
-        'signedOut' => __('Signed out. Open your personal link again. Your text is kept on this device.'),
+        'signedOut' => __('Signed out. Sign in with Google again. Your text is kept on this device.'),
         'previewNote' => __('Preview: not saved'),
         'counter' => __(':n of :max chosen'),
         'counterNone' => __('Choose at least one prompt.'),

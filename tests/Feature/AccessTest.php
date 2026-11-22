@@ -7,28 +7,28 @@ use App\Models\Response;
 use App\Models\Stage;
 use App\Models\User;
 
-it('logs in with a personal link and redirects to the first stage', function () {
-    $stage = Stage::factory()->create();
-    $p = Participant::factory()->create();
-
-    $this->get(route('participant.login', $p->access_token))
-        ->assertRedirect(route('participant.home'));
-
-    $this->get(route('participant.home'))->assertRedirect(route('participant.stage', $stage));
-    $this->assertAuthenticatedAs($p, 'participant');
+it('shows the Google sign-in page for guests', function () {
+    $this->get(route('participant.login'))
+        ->assertOk()
+        ->assertSee(__('Sign in to write'))
+        ->assertSee(route('auth.google.participant'), false);
 });
 
-it('rejects a wrong token', function () {
-    Participant::factory()->create();
-    $this->get('/p/not-a-real-token')->assertNotFound();
-});
-
-it('sends guests to the personal-link page, and API guests get 401', function () {
+it('sends guests to the login page, and API guests get 401', function () {
     $stage = Stage::factory()->create();
     $prompt = Prompt::factory()->create();
 
-    $this->get(route('participant.stage', $stage))->assertRedirect(route('participant.no-access'));
+    $this->get(route('participant.stage', $stage))->assertRedirect(route('participant.login'));
     $this->putJson(route('participant.save', $prompt->id), ['body' => 'x'])->assertUnauthorized();
+});
+
+it('signed-in participants land on the first stage from home', function () {
+    $stage = Stage::factory()->create();
+    $p = Participant::factory()->create();
+
+    $this->actingAs($p, 'participant')
+        ->get(route('participant.home'))
+        ->assertRedirect(route('participant.stage', $stage));
 });
 
 it('one participant cannot overwrite another participant\'s response', function () {

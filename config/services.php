@@ -39,6 +39,8 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI', rtrim((string) env('APP_URL', 'http://localhost'), '/').'/auth/google/callback'),
+        // Participants: any verified Google account on this domain.
+        'allowed_domain' => strtolower(trim((string) env('GOOGLE_ALLOWED_DOMAIN', 'talmaisrael.com'))),
         // Only these emails may access /admin (Google sign-in).
         'admin_emails' => array_values(array_filter(array_map(
             static fn (string $email) => strtolower(trim($email)),
