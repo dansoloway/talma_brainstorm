@@ -12,7 +12,7 @@ class Prompt extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['stage_id', 'body', 'language', 'sort', 'is_hidden'];
+    protected $fillable = ['stage_id', 'body', 'details', 'language', 'sort', 'is_hidden'];
 
     protected function casts(): array
     {

@@ -349,14 +349,40 @@ h1 {
   flex-shrink: 0;
   accent-color: var(--brand);
 }
-.prompt-text {
+.prompt-copy {
   flex: 1;
-  white-space: pre-line;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   text-align: start;
+}
+.prompt-text {
+  white-space: pre-line;
   font-size: 1.02rem;
+  font-weight: 600;
+}
+.prompt-details {
+  white-space: pre-line;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .writer { margin-top: 14px; }
+.answers {
+  display: grid;
+  gap: 14px;
+}
+.answer-block { display: grid; gap: 6px; }
+.answer-label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.writer .add-answer {
+  margin-top: 12px;
+}
 .writer[hidden], .kept-note[hidden], .toast[hidden] { display: none; }
 .answer {
   width: 100%;

@@ -61,6 +61,7 @@
         @forelse ($prompts as $prompt)
             @php($r = $responses->get($prompt->id))
             @php($selected = (bool) $r?->is_selected)
+            @php($answers = $r ? $r->answersList() : [''])
             <li class="prompt {{ $selected ? 'is-selected' : '' }}" dir="{{ $prompt->language->dir() }}"
                 data-prompt-id="{{ $prompt->id }}"
                 data-selected="{{ $selected ? 1 : 0 }}"
@@ -70,16 +71,30 @@
                     <x-prompt-text :prompt="$prompt" />
                 </label>
                 <div class="writer" @if (! $selected) hidden @endif>
-                    <textarea class="answer"
-                              rows="5"
-                              dir="{{ $prompt->language->dir() }}"
-                              lang="{{ $prompt->language->value }}"
-                              aria-label="{{ __('Your response') }}"
-                              placeholder="{{ $prompt->language->value === 'he' ? 'כתבו כאן…' : 'Write here…' }}"
-                              @readonly($preview)>{{ $r?->body }}</textarea>
-                    <span class="status" aria-live="polite"></span>
+                    <div class="answers">
+                        @foreach ($answers as $index => $answer)
+                            <div class="answer-block" data-answer-index="{{ $index }}">
+                                @if (count($answers) > 1)
+                                    <p class="answer-label">{{ __('Answer :n', ['n' => $index + 1]) }}</p>
+                                @endif
+                                <textarea class="answer"
+                                          rows="5"
+                                          dir="{{ $prompt->language->dir() }}"
+                                          lang="{{ $prompt->language->value }}"
+                                          aria-label="{{ __('Your response') }}"
+                                          placeholder="{{ $prompt->language->value === 'he' ? 'כתבו כאן…' : 'Write here…' }}"
+                                          @readonly($preview)>{{ $answer }}</textarea>
+                                <span class="status" aria-live="polite"></span>
+                            </div>
+                        @endforeach
+                    </div>
+                    @if (! $preview)
+                        <button type="button" class="btn btn-secondary add-answer" @disabled(count($answers) >= $maxAnswers)>
+                            {{ __('Add Another Answer') }}
+                        </button>
+                    @endif
                 </div>
-                <p class="kept-note" @if ($selected || blank($r?->body)) hidden @endif>
+                <p class="kept-note" @if ($selected || ! ($r?->hasText() ?? false)) hidden @endif>
                     {{ __('Your text is kept. Choose this prompt again to bring it back.') }}
                 </p>
             </li>
@@ -112,6 +127,7 @@
     'preview' => $preview,
     'participantId' => $participant?->id,
     'max' => $maxPerStage,
+    'maxAnswers' => $maxAnswers,
     'urls' => [
         'select' => url('/api/prompts/__ID__/select'),
         'deselect' => url('/api/prompts/__ID__/deselect'),
@@ -129,6 +145,9 @@
         'atMax' => __('You can choose up to :max prompts. Drop one before picking another.', ['max' => $maxPerStage]),
         'network' => __('Could not reach the server. Please try again.'),
         'leaveUnsaved' => __('Some text has not reached the server yet. It is kept on this device and will be saved when you come back to this stage. Leave anyway?'),
+        'addAnswer' => __('Add Another Answer'),
+        'answerLabel' => __('Answer :n'),
+        'answersAtMax' => __('You can add up to :max answers for one prompt.', ['max' => $maxAnswers]),
     ],
 ])
 <script type="application/json" id="stage-config">{!! json_encode($stageConfig, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) !!}</script>

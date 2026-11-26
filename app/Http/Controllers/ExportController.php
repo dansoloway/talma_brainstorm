@@ -67,10 +67,12 @@ class ExportController extends Controller
                     $stageNumbers[$r->stage_id] ?? '',
                     $r->stage->title,
                     $r->prompt_id,
-                    $r->prompt_body_snapshot,
+                    filled($r->prompt_details_snapshot)
+                        ? $r->prompt_body_snapshot."\n\n".$r->prompt_details_snapshot
+                        : $r->prompt_body_snapshot,
                     $r->prompt->language->value,
                     $r->is_selected ? 'yes' : 'no',
-                    $r->body,
+                    $r->displayBody(),
                     $r->last_saved_at?->toDateTimeString(),
                 ]);
             }

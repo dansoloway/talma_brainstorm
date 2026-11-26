@@ -38,5 +38,8 @@
     "Overview": "סקירה",
     "What you will write": "מה תכתבו",
     "Here are all the prompts, grouped by stage. This page is read-only — start when you are ready.": "כאן כל השאלות, לפי שלבים. העמוד לקריאה בלבד — התחילו כשתהיו מוכנים.",
-    "Start writing": "התחילו לכתוב"
+    "Start writing": "התחילו לכתוב",
+    "Add Another Answer": "הוסיפו תשובה נוספת",
+    "Answer :n": "תשובה :n",
+    "You can add up to :max answers for one prompt.": "אפשר להוסיף עד :max תשובות לשאלה אחת."
 }

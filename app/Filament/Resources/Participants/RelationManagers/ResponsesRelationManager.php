@@ -34,14 +34,16 @@ class ResponsesRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('stage.title')->label('Stage')->wrap(),
                 TextColumn::make('prompt_body_snapshot')
-                    ->label('Prompt')
+                    ->label('Main question')
                     ->wrap()
                     ->color('gray')
+                    ->description(fn (Response $record) => $record->prompt_details_snapshot)
                     ->extraAttributes(fn (Response $record) => ['dir' => $record->prompt->language->dir()]),
                 TextColumn::make('body')
                     ->label('Response')
                     ->searchable()
                     ->wrap()
+                    ->state(fn (Response $record) => $record->displayBody())
                     ->extraAttributes(fn (Response $record) => [
                         'dir' => $record->prompt->language->dir(),
                         'style' => 'white-space: pre-line',

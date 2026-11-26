@@ -54,11 +54,14 @@ class SelectPrompt
                 return $response;
             }
 
-            $response = new Response(['is_selected' => true, 'body' => '']);
+            $response = new Response(['is_selected' => true]);
             $response->participant_id = $participant->id;
             $response->prompt_id = $prompt->id;
             $response->stage_id = $prompt->stage_id;
             $response->prompt_body_snapshot = $prompt->body;
+            $response->prompt_details_snapshot = $prompt->details;
+            $response->setAnswersList(['']);
+            $response->answer_save_seqs = [0];
             $response->save();
 
             return $response;

@@ -12,8 +12,12 @@ class ResponseFactory extends Factory
 {
     public function definition(): array
     {
+        $body = fake()->paragraphs(2, true);
+
         return [
-            'body' => fake()->paragraphs(2, true),
+            'body' => $body,
+            'answers' => [$body],
+            'answer_save_seqs' => [0],
             'is_selected' => true,
             'last_saved_at' => now(),
         ];
@@ -27,6 +31,10 @@ class ResponseFactory extends Factory
             $response->prompt_id = $prompt->id;
             $response->stage_id = $prompt->stage_id;
             $response->prompt_body_snapshot ??= $prompt->body;
+            $response->prompt_details_snapshot ??= $prompt->details;
+            if ($response->answers === null) {
+                $response->setAnswersList([(string) $response->body]);
+            }
         });
     }
 
@@ -35,6 +43,7 @@ class ResponseFactory extends Factory
     {
         return $this->state(fn () => [
             'body' => "שורה ראשונה, עם פסיק\nLine two with \"quotes\"\r\nשורה שלישית; end",
+            'answers' => ["שורה ראשונה, עם פסיק\nLine two with \"quotes\"\r\nשורה שלישית; end"],
         ]);
     }
 }

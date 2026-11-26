@@ -14,9 +14,9 @@ beforeEach(function () {
     app(SelectPrompt::class)($this->me, $this->prompt);
 });
 
-function saveAs($test, Participant $p, int $promptId, string $body, bool $clear = false, ?int $clientSeq = null)
+function saveAs($test, Participant $p, int $promptId, string $body, bool $clear = false, ?int $clientSeq = null, int $answerIndex = 0)
 {
-    $payload = ['body' => $body, 'clear' => $clear];
+    $payload = ['body' => $body, 'clear' => $clear, 'answer_index' => $answerIndex];
     if ($clientSeq !== null) {
         $payload['client_seq'] = $clientSeq;
     }
@@ -120,4 +120,22 @@ it('the save path runs a small fixed number of queries and sends no mail', funct
 
     expect(count($queries))->toBeLessThanOrEqual(2); // one read + one write
     Mail::assertNothingSent();
+});
+
+it('saves a second answer without overwriting the first', function () {
+    saveAs($this, $this->me, $this->prompt->id, 'First answer', clientSeq: 1)->assertOk();
+    saveAs($this, $this->me, $this->prompt->id, 'Second answer', clientSeq: 1, answerIndex: 1)
+        ->assertOk()
+        ->assertJsonPath('answers.0', 'First answer')
+        ->assertJsonPath('answers.1', 'Second answer');
+
+    $row = Response::sole();
+    expect($row->answersList())->toBe(['First answer', 'Second answer'])
+        ->and($row->displayBody())->toContain('First answer')
+        ->and($row->displayBody())->toContain('Second answer');
+});
+
+it('rejects an answer index beyond the max', function () {
+    saveAs($this, $this->me, $this->prompt->id, 'Too many', answerIndex: SaveResponse::MAX_ANSWERS)
+        ->assertUnprocessable();
 });

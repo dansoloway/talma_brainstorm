@@ -68,6 +68,7 @@ class ParticipantController extends Controller
         return response()->json([
             'selected' => true,
             'body' => $response->body,
+            'answers' => $response->answersList(),
             'selected_count' => $this->selectedCount($prompt->stage_id),
         ]);
     }
@@ -89,6 +90,7 @@ class ParticipantController extends Controller
             'body' => ['present', 'nullable', 'string', 'max:100000'],
             'clear' => ['sometimes', 'boolean'],
             'client_seq' => ['sometimes', 'nullable', 'integer', 'min:1'],
+            'answer_index' => ['sometimes', 'integer', 'min:0', 'max:'.(SaveResponse::MAX_ANSWERS - 1)],
         ]);
 
         $result = $save(
@@ -97,6 +99,7 @@ class ParticipantController extends Controller
             (string) ($data['body'] ?? ''),
             (bool) ($data['clear'] ?? false),
             isset($data['client_seq']) ? (int) $data['client_seq'] : null,
+            (int) ($data['answer_index'] ?? 0),
         );
 
         return response()
@@ -104,6 +107,7 @@ class ParticipantController extends Controller
                 'saved_at' => $result['saved_at']?->toIso8601String(),
                 'applied' => $result['applied'],
                 'body' => $result['body'],
+                'answers' => $result['answers'],
             ])
             ->header('Cache-Control', 'no-store');
     }
@@ -167,6 +171,7 @@ class ParticipantController extends Controller
             'prompts' => $stage->visiblePrompts()->get(),
             'responses' => $responses,
             'maxPerStage' => SelectPrompt::MAX_PER_STAGE,
+            'maxAnswers' => SaveResponse::MAX_ANSWERS,
         ];
     }
 }

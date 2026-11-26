@@ -29,13 +29,14 @@ class ResponsesRelationManager extends RelationManager
                     ->label('Response')
                     ->searchable()
                     ->wrap()
+                    ->state(fn (Response $record) => $record->displayBody())
                     ->extraAttributes(fn (Response $record) => [
                         'dir' => $this->getOwnerRecord()->language->dir(),
                         'style' => 'white-space: pre-line',
                     ]),
                 TextColumn::make('words')
                     ->label('Words')
-                    ->state(fn (Response $record) => count(preg_split('/\s+/u', trim($record->body), -1, PREG_SPLIT_NO_EMPTY))),
+                    ->state(fn (Response $record) => count(preg_split('/\s+/u', trim($record->displayBody()), -1, PREG_SPLIT_NO_EMPTY))),
                 IconColumn::make('is_selected')->label('Selected')->boolean(),
                 TextColumn::make('last_saved_at')->label('Last saved')->since()->sortable(),
             ])

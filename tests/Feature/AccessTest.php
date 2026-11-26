@@ -27,6 +27,7 @@ it('signed-in participants see a read-only overview of all prompts first', funct
     $prompt = Prompt::factory()->create([
         'stage_id' => $stage->id,
         'body' => 'Describe a moment of belonging.',
+        'details' => 'Who was there with you?',
     ]);
     $hidden = Prompt::factory()->create([
         'stage_id' => $stage->id,
@@ -41,11 +42,27 @@ it('signed-in participants see a read-only overview of all prompts first', funct
         ->assertSee(__('What you will write'))
         ->assertSee('Warm-up')
         ->assertSee('Describe a moment of belonging.')
+        ->assertSee('Who was there with you?')
         ->assertDontSee('Hidden prompt text')
         ->assertSee(route('participant.stage', $stage), false)
         ->assertDontSee('type="checkbox"', false);
 
     expect($hidden->is_hidden)->toBeTrue();
+});
+
+it('stage page shows supporting details and add-another-answer', function () {
+    $prompt = Prompt::factory()->create([
+        'body' => 'Main question here?',
+        'details' => 'Supporting detail text.',
+    ]);
+    $p = Participant::factory()->create();
+
+    $this->actingAs($p, 'participant')
+        ->get(route('participant.stage', $prompt->stage))
+        ->assertOk()
+        ->assertSee('Main question here?')
+        ->assertSee('Supporting detail text.')
+        ->assertSee(__('Add Another Answer'));
 });
 
 it('first stage Back link returns to the overview', function () {

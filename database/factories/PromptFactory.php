@@ -13,6 +13,7 @@ class PromptFactory extends Factory
         return [
             'stage_id' => Stage::factory(),
             'body' => fake()->sentence(10).'?',
+            'details' => fake()->optional(0.6)->sentence(12),
             'language' => Language::English,
         ];
     }

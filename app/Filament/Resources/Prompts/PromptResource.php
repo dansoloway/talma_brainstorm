@@ -41,7 +41,12 @@ class PromptResource extends Resource
     {
         return $schema->components([
             TextEntry::make('body')
-                ->label('Prompt')
+                ->label('Main question')
+                ->columnSpanFull()
+                ->extraAttributes(fn (Prompt $record) => ['dir' => $record->language->dir()]),
+            TextEntry::make('details')
+                ->label('Supporting details')
+                ->placeholder('—')
                 ->columnSpanFull()
                 ->extraAttributes(fn (Prompt $record) => ['dir' => $record->language->dir()]),
             TextEntry::make('stage.title')->label('Stage'),
@@ -64,10 +69,11 @@ class PromptResource extends Resource
             ->columns([
                 TextColumn::make('stage.title')->label('Stage')->wrap(),
                 TextColumn::make('body')
-                    ->label('Prompt')
+                    ->label('Main question')
                     ->searchable()
                     ->wrap()
                     ->limit(160)
+                    ->description(fn (Prompt $record) => $record->details ? \Illuminate\Support\Str::limit($record->details, 80) : null)
                     ->extraAttributes(fn (Prompt $record) => ['dir' => $record->language->dir()]),
                 TextColumn::make('language')->badge(),
                 TextColumn::make('chosen_count')->label('Chosen by')->sortable(),

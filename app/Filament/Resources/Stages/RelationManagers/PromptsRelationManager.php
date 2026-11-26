@@ -28,10 +28,16 @@ class PromptsRelationManager extends RelationManager
     {
         return $schema->components([
             Textarea::make('body')
-                ->label('Prompt')
+                ->label('Main question')
                 ->required()
                 ->rows(3)
                 ->extraInputAttributes(['dir' => 'auto'])
+                ->columnSpanFull(),
+            Textarea::make('details')
+                ->label('Supporting details')
+                ->rows(3)
+                ->extraInputAttributes(['dir' => 'auto'])
+                ->helperText('Optional guidance shown under the main question.')
                 ->columnSpanFull(),
             Select::make('language')
                 ->options(Language::class)
@@ -54,8 +60,9 @@ class PromptsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('number')->label('#')->state(fn ($rowLoop) => $rowLoop->iteration),
                 TextColumn::make('body')
-                    ->label('Prompt')
+                    ->label('Main question')
                     ->wrap()
+                    ->description(fn (Prompt $record) => $record->details)
                     ->extraAttributes(fn (Prompt $record) => ['dir' => $record->language->dir()]),
                 TextColumn::make('language')->badge(),
                 IconColumn::make('is_hidden')->label('Hidden')->boolean()
