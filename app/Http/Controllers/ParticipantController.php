@@ -16,15 +16,21 @@ use Illuminate\View\View;
 
 class ParticipantController extends Controller
 {
-    public function home(): RedirectResponse|View
+    public function home(): View
     {
-        $first = Stage::ordered()->first();
+        $stages = Stage::ordered()
+            ->with(['prompts' => fn ($q) => $q->where('is_hidden', false)->orderBy('sort')->orderBy('id')])
+            ->get();
 
-        if (! $first) {
+        if ($stages->isEmpty()) {
             return view('participant.waiting');
         }
 
-        return redirect()->route('participant.stage', $first);
+        return view('participant.toc', [
+            'participant' => $this->participant(),
+            'stages' => $stages,
+            'firstStage' => $stages->first(),
+        ]);
     }
 
     public function stage(Stage $stage): View

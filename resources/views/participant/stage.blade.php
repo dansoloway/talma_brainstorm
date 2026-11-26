@@ -91,6 +91,8 @@
     <footer class="pager">
         @if ($previous)
             <a class="btn btn-secondary" data-nav href="{{ $stageUrl($previous) }}">{{ __('Back') }}</a>
+        @elseif (! $preview)
+            <a class="btn btn-secondary" data-nav href="{{ route('participant.home') }}">{{ __('Overview') }}</a>
         @else
             <span></span>
         @endif

@@ -22,13 +22,42 @@ it('sends guests to the login page, and API guests get 401', function () {
     $this->putJson(route('participant.save', $prompt->id), ['body' => 'x'])->assertUnauthorized();
 });
 
-it('signed-in participants land on the first stage from home', function () {
-    $stage = Stage::factory()->create();
+it('signed-in participants see a read-only overview of all prompts first', function () {
+    $stage = Stage::factory()->create(['title' => 'Warm-up']);
+    $prompt = Prompt::factory()->create([
+        'stage_id' => $stage->id,
+        'body' => 'Describe a moment of belonging.',
+    ]);
+    $hidden = Prompt::factory()->create([
+        'stage_id' => $stage->id,
+        'body' => 'Hidden prompt text',
+        'is_hidden' => true,
+    ]);
     $p = Participant::factory()->create();
 
     $this->actingAs($p, 'participant')
         ->get(route('participant.home'))
-        ->assertRedirect(route('participant.stage', $stage));
+        ->assertOk()
+        ->assertSee(__('What you will write'))
+        ->assertSee('Warm-up')
+        ->assertSee('Describe a moment of belonging.')
+        ->assertDontSee('Hidden prompt text')
+        ->assertSee(route('participant.stage', $stage), false)
+        ->assertDontSee('type="checkbox"', false);
+
+    expect($hidden->is_hidden)->toBeTrue();
+});
+
+it('first stage Back link returns to the overview', function () {
+    $stage = Stage::factory()->create();
+    Prompt::factory()->create(['stage_id' => $stage->id]);
+    $p = Participant::factory()->create();
+
+    $this->actingAs($p, 'participant')
+        ->get(route('participant.stage', $stage))
+        ->assertOk()
+        ->assertSee(route('participant.home'), false)
+        ->assertSee(__('Overview'));
 });
 
 it('one participant cannot overwrite another participant\'s response', function () {
